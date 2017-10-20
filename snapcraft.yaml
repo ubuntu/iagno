@@ -35,6 +35,7 @@ apps:
       - desktop-legacy
       - gsettings
       - network
+      - pulseaudio
       - unity7
       - wayland
     desktop: usr/share/applications/iagno.desktop
