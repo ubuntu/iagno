@@ -19,17 +19,17 @@ plugs:
     interface: content
     target: $SNAP/gnome-platform
     default-provider: gnome-3-26-1604
-  gtk3-themes:
+  gtk-3-themes:
     interface: content
-    target: $SNAP/usr/share/themes
+    target: $SNAP/data-dir/themes
     default-provider: gtk-common-themes
   icon-themes:
     interface: content
-    target: $SNAP/usr/share/icons
+    target: $SNAP/data-dir/icons
     default-provider: gtk-common-themes
   sound-themes:
     interface: content
-    target: $SNAP/usr/share/sounds
+    target: $SNAP/data-dir/sounds
     default-provider: gtk-common-themes
 
 slots:
@@ -60,13 +60,12 @@ parts:
     source-type: git
     source-tag: 3.22.0
     plugin: autotools
-    prepare:
+    override-build: |
       sed -i.bak -e 's|=iagno$|=${SNAP}/meta/gui/iagno.png|g' data/iagno.desktop.in
-    install: |
+      snapcraftctl build
       mkdir -p $SNAPCRAFT_PART_INSTALL/meta/gui/
       cp ../src/data/icons/hicolor/256x256/iagno.png $SNAPCRAFT_PART_INSTALL/meta/gui/
       cp data/iagno.desktop $SNAPCRAFT_PART_INSTALL/meta/gui/
-    # workaround the issue described in https://launchpad.net/bugs/1583250
     configflags: [--disable-maintainer-mode, --prefix=/snap/iagno/current/usr]
     organize:
       snap/iagno/current/usr: usr
