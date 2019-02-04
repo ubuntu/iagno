@@ -90,7 +90,7 @@ parts:
       mkdir -pv $SNAPCRAFT_PART_INSTALL/gnome-platform
 
   iagno:
-    after: [desktop-gnome-platform]
+    after: [desktop-gnome-platform, libcanberra]
     source: https://gitlab.gnome.org/GNOME/iagno.git
     source-type: git
     source-tag: 3.22.0
