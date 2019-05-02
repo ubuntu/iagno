@@ -1,16 +1,5 @@
 name: iagno
-version: 3.22.0
-summary: 'Dominate the board in a classic version of Reversi'
-description: |
-  Iagno is a computer version of the game Reversi, a two-player strategy
-  board game. The game is played with tiles that are dark on one side and
-  light on the other.
-
-  The object of Iagno is to flip as many of your opponent's tiles to your
-  color as possible while preventing your opponent from flipping your tiles
-  to his color. This is done by trapping your opponent's tiles between two
-  tiles of your own color.
-
+adopt-info: iagno
 grade: stable # must be 'stable' to release into candidate/stable channels
 confinement: strict
 base: core18
@@ -38,10 +27,11 @@ slots:
   iagno:
     interface: dbus
     bus: session
-    name: org.gnome.iagno
+    name: org.gnome.Reversi
 
 apps:
   iagno:
+    common-id: org.gnome.Reversi.desktop
     command: desktop-launch iagno
     plugs:
       - desktop
@@ -51,7 +41,7 @@ apps:
       - pulseaudio
       - unity7
       - wayland
-    desktop: usr/share/applications/iagno.desktop
+    desktop: usr/share/applications/org.gnome.Reversi.desktop
 
 parts:
   libcanberra:
@@ -83,7 +73,6 @@ parts:
     plugin: make
     make-parameters: ["FLAVOR=gtk3"]
     build-packages:
-      - build-essential
       - libgtk-3-dev
     override-build: |
       snapcraftctl build
@@ -93,15 +82,20 @@ parts:
     after: [desktop-gnome-platform, libcanberra]
     source: https://gitlab.gnome.org/GNOME/iagno.git
     source-type: git
-    source-tag: 3.22.0
-    plugin: autotools
+    source-branch: gnome-3-32
+    parse-info: [usr/share/metainfo/org.gnome.Reversi.appdata.xml]
+    plugin: meson
+    meson-parameters: [ --prefix=/snap/iagno/current//usr ]
+    override-pull: |
+      snapcraftctl pull
+      snapcraftctl set-version $(git describe --tags --abbrev=10)
     override-build: |
-      sed -i.bak -e 's|=iagno$|=${SNAP}/meta/gui/iagno.png|g' data/iagno.desktop.in
+      sed -i.bak -e 's|=org.gnome.Reversi$|=${SNAP}/meta/gui/iagno.png|g' data/org.gnome.Reversi.desktop.in
+      cp $SNAPCRAFT_STAGE/usr/share/vala/vapi/libcanberra.vapi src/vapi/
       snapcraftctl build
       mkdir -p $SNAPCRAFT_PART_INSTALL/meta/gui/
-      cp ../src/data/icons/hicolor/256x256/iagno.png $SNAPCRAFT_PART_INSTALL/meta/gui/
-      cp data/iagno.desktop $SNAPCRAFT_PART_INSTALL/meta/gui/
-    configflags: [--disable-maintainer-mode, --prefix=/snap/iagno/current/usr]
+      cp ../src/data/icons/hicolor/256x256/org.gnome.Reversi.png $SNAPCRAFT_PART_INSTALL/meta/gui/iagno.png
+      cp snapbuild/data/org.gnome.Reversi.desktop $SNAPCRAFT_PART_INSTALL/meta/gui/
     organize:
       snap/iagno/current/usr: usr
     build-packages:
@@ -113,4 +107,3 @@ parts:
       - librsvg2-dev
       - valac
       - yelp-tools
-
