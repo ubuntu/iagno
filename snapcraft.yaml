@@ -82,7 +82,7 @@ parts:
     after: [desktop-gnome-platform, libcanberra]
     source: https://gitlab.gnome.org/GNOME/iagno.git
     source-type: git
-    source-branch: gnome-3-32
+    source-branch: gnome-3-36
     parse-info: [usr/share/metainfo/org.gnome.Reversi.appdata.xml]
     plugin: meson
     meson-parameters: [ --prefix=/snap/iagno/current//usr ]
