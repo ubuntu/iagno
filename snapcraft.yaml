@@ -2,25 +2,7 @@ name: iagno
 adopt-info: iagno
 grade: stable # must be 'stable' to release into candidate/stable channels
 confinement: strict
-base: core18
-
-plugs:
-  gnome-3-28-1804:
-    interface: content
-    target: $SNAP/gnome-platform
-    default-provider: gnome-3-28-1804
-  gtk-3-themes:
-    interface: content
-    target: $SNAP/data-dir/themes
-    default-provider: gtk-common-themes
-  icon-themes:
-    interface: content
-    target: $SNAP/data-dir/icons
-    default-provider: gtk-common-themes
-  sound-themes:
-    interface: content
-    target: $SNAP/data-dir/sounds
-    default-provider: gtk-common-themes
+base: core20
 
 slots:
   # for GtkApplication registration
@@ -31,94 +13,29 @@ slots:
 
 apps:
   iagno:
+    extensions: [ gnome-3-38 ]
     common-id: org.gnome.Reversi.desktop
-    command: desktop-launch iagno
-    plugs:
-      - desktop
-      - desktop-legacy
-      - gsettings
-      - network
-      - pulseaudio
-      - unity7
-      - wayland
+    command: usr/bin/iagno
     desktop: usr/share/applications/org.gnome.Reversi.desktop
+    plugs:
+      - audio-playback
 
 parts:
-  libcanberra:
-    source: git://git.0pointer.de/libcanberra
-    source-type: git
-    plugin: autotools
-    configflags:
-      - --prefix=/snap/iagno/current/usr
-      - --enable-pulse
-      - --enable-gstreamer
-      - --enable-gtk3
-      - --enable-alsa
-      - --disable-oss
-    organize:
-      snap/iagno/current/usr: usr
-    build-packages:
-      - libltdl-dev
-      - libasound2-dev
-      - libvorbis-dev
-      - libgtk-3-dev
-      - libtdb-dev
-      - libpulse-dev
-      - libgstreamer1.0-dev
-      - gtk-doc-tools
-
-  gsound:
-    after: [libcanberra]
-    source: https://gitlab.gnome.org/GNOME/gsound.git
-    source-type: git
-    source-tag: 1.0.3 
-    plugin: meson
-    meson-parameters: [--prefix=/snap/iagno/current/usr]
-    organize:
-      snap/iagno/current/usr: usr
-    build-packages:
-      - autoconf-archive
-      - gtk-doc-tools
-      - intltool
-      - libgirepository1.0-dev
-
-  desktop-gnome-platform:
-    source: https://github.com/ubuntu/snapcraft-desktop-helpers.git
-    source-subdir: gtk
-    plugin: make
-    make-parameters: ["FLAVOR=gtk3"]
-    build-packages:
-      - libgtk-3-dev
-    override-build: |
-      snapcraftctl build
-      mkdir -pv $SNAPCRAFT_PART_INSTALL/gnome-platform
-
   iagno:
-    after: [desktop-gnome-platform, gsound]
     source: https://gitlab.gnome.org/GNOME/iagno.git
     source-type: git
     source-branch: gnome-3-36
     parse-info: [usr/share/metainfo/org.gnome.Reversi.appdata.xml]
     plugin: meson
-    meson-parameters: [ --prefix=/snap/iagno/current//usr ]
+    meson-parameters: [ --prefix=/snap/iagno/current/usr ]
     override-pull: |
       snapcraftctl pull
       snapcraftctl set-version $(git describe --tags --abbrev=10)
     override-build: |
-      sed -i.bak -e 's|=org.gnome.Reversi$|=${SNAP}/meta/gui/iagno.png|g' data/org.gnome.Reversi.desktop.in
-      cp $SNAPCRAFT_STAGE/usr/share/vala/vapi/libcanberra.vapi src/vapi/
+      sed -i.bak -e 's|=org.gnome.Reversi$|=${SNAP}/meta/gui/iagno.png|g' $SNAPCRAFT_PART_SRC/data/org.gnome.Reversi.desktop.in
       snapcraftctl build
       mkdir -p $SNAPCRAFT_PART_INSTALL/meta/gui/
       cp ../src/data/icons/hicolor/256x256/org.gnome.Reversi.png $SNAPCRAFT_PART_INSTALL/meta/gui/iagno.png
-      cp snapbuild/data/org.gnome.Reversi.desktop $SNAPCRAFT_PART_INSTALL/meta/gui/
+      cp $SNAPCRAFT_PART_BUILD/data/org.gnome.Reversi.desktop $SNAPCRAFT_PART_INSTALL/meta/gui/
     organize:
       snap/iagno/current/usr: usr
-    build-packages:
-      - appstream-util
-      - gnome-pkg-tools
-      - intltool
-      - libglib2.0-dev
-      - libgtk-3-dev
-      - librsvg2-dev
-      - valac
-      - yelp-tools
