@@ -35,7 +35,6 @@ parts:
       sed -i.bak -e 's|=org.gnome.Reversi$|=${SNAP}/meta/gui/iagno.png|g' $SNAPCRAFT_PART_SRC/data/org.gnome.Reversi.desktop.in
       snapcraftctl build
       mkdir -p $SNAPCRAFT_PART_INSTALL/meta/gui/
-      cp ../src/data/icons/hicolor/256x256/org.gnome.Reversi.png $SNAPCRAFT_PART_INSTALL/meta/gui/iagno.png
       cp $SNAPCRAFT_PART_BUILD/data/org.gnome.Reversi.desktop $SNAPCRAFT_PART_INSTALL/meta/gui/
     organize:
       snap/iagno/current/usr: usr
