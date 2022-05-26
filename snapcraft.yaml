@@ -1,5 +1,9 @@
 name: iagno
 adopt-info: iagno
+# The appstream version has newline breaks which the snap store doesn't accept
+# Store upload failed:
+# __all__: summary: Multiple lines are not allowed.
+summary: Dominate the board in a classic reversi game or play the reversed variant
 grade: stable # must be 'stable' to release into candidate/stable channels
 confinement: strict
 base: core20
