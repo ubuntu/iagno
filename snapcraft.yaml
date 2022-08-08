@@ -45,4 +45,3 @@ parts:
       craftctl default
       mkdir -p $CRAFT_PART_INSTALL/meta/gui/
       cp $CRAFT_PART_SRC/data/icons/hicolor/scalable/org.gnome.Reversi.svg $CRAFT_PART_INSTALL/meta/gui/iagno.svg
-      cp $CRAFT_PART_BUILD/data/org.gnome.Reversi.desktop $CRAFT_PART_INSTALL/meta/gui/
