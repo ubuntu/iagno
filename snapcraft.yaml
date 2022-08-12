@@ -6,7 +6,7 @@ adopt-info: iagno
 summary: Dominate the board in a classic reversi game or play the reversed variant
 grade: stable # must be 'stable' to release into candidate/stable channels
 confinement: strict
-base: core20
+base: core22
 
 slots:
   # for GtkApplication registration
@@ -15,9 +15,13 @@ slots:
     bus: session
     name: org.gnome.Reversi
 
+layout:
+ /usr/share/iagno:
+   symlink: $SNAP/usr/share/iagno
+
 apps:
   iagno:
-    extensions: [ gnome-3-38 ]
+    extensions: [ gnome ]
     common-id: org.gnome.Reversi.desktop
     command: usr/bin/iagno
     desktop: usr/share/applications/org.gnome.Reversi.desktop
@@ -31,15 +35,13 @@ parts:
     source-tag: '3.38.1'
     parse-info: [usr/share/metainfo/org.gnome.Reversi.appdata.xml]
     plugin: meson
-    meson-parameters: [ --prefix=/snap/iagno/current/usr ]
+    meson-parameters:
+      - --prefix=/usr
     override-pull: |
-      snapcraftctl pull
-      snapcraftctl set-version $(git describe --tags --abbrev=10)
+      craftctl default
+      patch -p1 < $CRAFT_PROJECT_DIR/patches/patch1.diff
     override-build: |
-      sed -i.bak -e 's|=org.gnome.Reversi$|=${SNAP}/meta/gui/iagno.svg|g' $SNAPCRAFT_PART_SRC/data/org.gnome.Reversi.desktop.in
-      snapcraftctl build
-      mkdir -p $SNAPCRAFT_PART_INSTALL/meta/gui/
-      cp ../src/data/icons/hicolor/scalable/org.gnome.Reversi.svg $SNAPCRAFT_PART_INSTALL/meta/gui/iagno.svg
-      cp $SNAPCRAFT_PART_BUILD/data/org.gnome.Reversi.desktop $SNAPCRAFT_PART_INSTALL/meta/gui/
-    organize:
-      snap/iagno/current/usr: usr
+      sed -i.bak -e 's|=org.gnome.Reversi$|=${SNAP}/meta/gui/iagno.svg|g' $CRAFT_PART_SRC/data/org.gnome.Reversi.desktop.in
+      craftctl default
+      mkdir -p $CRAFT_PART_INSTALL/meta/gui/
+      cp $CRAFT_PART_SRC/data/icons/hicolor/scalable/org.gnome.Reversi.svg $CRAFT_PART_INSTALL/meta/gui/iagno.svg
